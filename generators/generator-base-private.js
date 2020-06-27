@@ -150,7 +150,7 @@ module.exports = class extends Generator {
                 `${prefix ? `${prefix}/` : ''}i18n/entity_${language}.json.ejs`,
                 `${this.CLIENT_MAIN_SRC_DIR}i18n/${language}/${fileName}.json`
             );
-            this.addEntityTranslationKey(this.entityTranslationKeyMenu, this.entityClass, language);
+            this.addEntityTranslationKey(this.entityTranslationKeyMenu, this.entityClassHumanized || this.entityClass, language);
         } catch (e) {
             this.debug('Error:', e);
             // An exception is thrown if the folder doesn't exist
