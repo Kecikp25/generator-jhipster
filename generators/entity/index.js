@@ -890,8 +890,11 @@ class EntityGenerator extends BaseBlueprintGenerator {
                 context.relationships.forEach(relationship => {
                     const relationshipOptions = relationship.options || {};
                     const otherEntityName = relationship.otherEntityName;
-                    const otherEntityData = this.getEntityJson(otherEntityName);
+                    const otherEntityData = this.getEntityJson(_.upperFirst(otherEntityName));
+                    console.log(otherEntityName);
+                    console.log(otherEntityData);
                     if (otherEntityData) {
+                        console.log(otherEntityData.embedded);
                         if (otherEntityData.microserviceName && !otherEntityData.clientRootFolder) {
                             otherEntityData.clientRootFolder = otherEntityData.microserviceName;
                         }
@@ -899,6 +902,7 @@ class EntityGenerator extends BaseBlueprintGenerator {
                             relationship.otherEntityIsEmbedded = true;
                         }
                     }
+                    console.log(relationship.otherEntityIsEmbedded);
                     const jhiTablePrefix = context.jhiTablePrefix;
 
                     relationship.otherEntityPrimaryKeyType =

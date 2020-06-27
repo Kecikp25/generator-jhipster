@@ -55,7 +55,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.swagger.annotations.ApiModel;
 <%_ } if (!hasDto && importApiModelProperty === true) { _%>
 import io.swagger.annotations.ApiModelProperty;
-<%_ } if (enableHibernateCache) { _%>
+<%_ } if (enableHibernateCache && !embedded) { _%>
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 <%_ } if (hasTextBlob === true || (fieldsContainUUID === true && ['mysql', 'mariadb'].includes(prodDatabaseType))) { _%>
@@ -142,13 +142,19 @@ import static org.springframework.data.couchbase.core.mapping.id.GenerationStrat
 @ApiModel(description = "<%- formatAsApiDescription(javadoc) %>")
     <%_ } _%>
 <%_ } _%>
-<%_ if (databaseType === 'sql') { _%>
+<%_
+if (embedded) {
+    if (databaseType === 'sql') { _%>
+@Embeddable
+<%_ }
+} else {
+    if (databaseType === 'sql') { _%>
 @Entity
 @Table(name = "<%= entityTableName %>")
 <%_     if (enableHibernateCache) { _%>
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 <%_     }
-} if (!embedded) {
+    } 
     if (databaseType === 'mongodb') { _%>
 @Document(collection = "<%= entityTableName %>")
 <%_ } if (databaseType === 'neo4j') { _%>
@@ -299,11 +305,14 @@ public class <%= asEntity(entityClass) %> implements Serializable {
     <%_ }
         if (relationshipType === 'one-to-many') {
             if (databaseType === 'sql') {
-    _%>
+                if (otherEntityIsEmbedded) { _%>
+    @ElementCollection
+            <%_ } else { _%>
     @OneToMany(mappedBy = "<%= otherEntityRelationshipName %>")
-            <%_ if (enableHibernateCache) { _%>
+                <%_ if (enableHibernateCache) { _%>
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-            <%_ }
+                <%_ }
+                }
         } else if (databaseType === 'mongodb' || databaseType === 'couchbase') {
             if (databaseType === 'mongodb' && !otherEntityIsEmbedded) { _%>
     @DBRef
@@ -373,7 +382,7 @@ public class <%= asEntity(entityClass) %> implements Serializable {
     private Set<<%= asEntity(otherEntityNameCapitalized) %>> <%= relationshipFieldNamePlural %> = new HashSet<>();
 
     <%_ } else {
-        if (databaseType === 'sql') {
+        if (databaseType === 'sql' && !otherEntityIsEmbedded) {
             if (ownerSide) { _%>
     @OneToOne<% if (relationshipRequired) { %>(optional = false)<% } %>
             <%_ if (relationshipValidate) { _%>
