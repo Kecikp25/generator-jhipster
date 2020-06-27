@@ -130,6 +130,10 @@ elif [[ "$JHI_ENTITY" == "sqlfull" ]]; then
     moveEntity MapsIdChildEntityWithDTO
     moveEntity MapsIdUserProfileWithDTO
 
+    # Test embedded fields
+    moveEntity DocumentBankAccount
+    moveEntity EmbeddedOperation
+
 elif [[ "$JHI_ENTITY" == "sql" ]]; then
     moveEntity BankAccount
     moveEntity Label
