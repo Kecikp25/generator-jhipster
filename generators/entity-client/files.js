@@ -331,7 +331,13 @@ function writeFiles() {
                 templatesDir = CLIENT_REACT_TEMPLATES_DIR;
             } else {
                 if (!this.embedded) {
-                    this.addEntityToMenu(this.entityStateName, this.enableTranslation, this.clientFramework, this.entityTranslationKeyMenu);
+                    this.addEntityToMenu(
+                        this.entityStateName,
+                        this.enableTranslation,
+                        this.clientFramework,
+                        this.entityTranslationKeyMenu,
+                        this.entityClassHumanized
+                    );
                 }
                 return;
             }
@@ -351,7 +357,13 @@ function writeFiles() {
                     this.clientFramework,
                     microserviceName
                 );
-                this.addEntityToMenu(this.entityStateName, this.enableTranslation, this.clientFramework, this.entityTranslationKeyMenu);
+                this.addEntityToMenu(
+                    this.entityStateName,
+                    this.enableTranslation,
+                    this.clientFramework,
+                    this.entityTranslationKeyMenu,
+                    this.entityClassHumanized
+                );
             }
         },
     };
