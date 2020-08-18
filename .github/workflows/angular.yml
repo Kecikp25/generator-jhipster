@@ -175,6 +175,28 @@ jobs:
             - name: 'GENERATION: jhipster info'
               run: $JHI_SCRIPTS/14-jhipster-info.sh
             #----------------------------------------------------------------------
+            # Prepare tests
+            #----------------------------------------------------------------------
+            - name: 'PREPARE: Cache local Maven repository'
+              if: "!contains(matrix.app-type, 'gradle')"
+              uses: actions/cache@v2
+              with:
+                  path: |
+                      ~/.m2/repository
+                      !~/.m2/repository/io/github/jhipster/
+                  key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml.ejs') }}
+                  restore-keys: |
+                      ${{ runner.os }}-maven-
+            - name: 'PREPARE: maven backend dependency'
+              if: "!contains(matrix.app-type, 'gradle')"
+              run: |
+                  ls ~/.m2/repository/io/github/jhipster/
+                  rm -rf ~/.m2/repository/io/github/jhipster/
+                  ./mvnw dependency:tree -U -B
+              working-directory: /home/runner/app
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            #----------------------------------------------------------------------
             # Launch tests
             #----------------------------------------------------------------------
             - name: 'TESTS: Start docker-compose containers'
