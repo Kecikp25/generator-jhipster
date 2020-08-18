@@ -184,7 +184,7 @@ jobs:
                   path: |
                       ~/.m2/repository
                       !~/.m2/repository/io/github/jhipster/
-                  key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml.ejs') }}
+                  key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
                   restore-keys: |
                       ${{ runner.os }}-maven-
             - name: 'PREPARE: maven backend dependency'

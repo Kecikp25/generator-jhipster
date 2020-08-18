@@ -35,12 +35,12 @@ fi
 
 # folder for app
 if [[ "$JHI_FOLDER_APP" == "" ]]; then
-    JHI_FOLDER_APP="$HOME"/app
+    JHI_FOLDER_APP="$JHI_HOME"/app
 fi
 
 # folder for uaa app
 if [[ "$JHI_FOLDER_UAA" == "" ]]; then
-    JHI_FOLDER_UAA="$HOME"/uaa
+    JHI_FOLDER_UAA="$JHI_HOME"/uaa
 fi
 
 # set correct OpenJDK version
