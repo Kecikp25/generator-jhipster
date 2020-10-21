@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-const { getDefaultLocale } = require('../utils');
+const { getDefaultLanguage } = require('../utils');
 
 module.exports = {
     askForLanguages,
@@ -38,7 +38,7 @@ function askI18n() {
                 name: 'nativeLanguage',
                 message: 'Please choose the native language of the application',
                 choices: () => this.getAllSupportedLanguageOptions(),
-                default: () => getDefaultLocale(),
+                default: () => getDefaultLanguage(),
                 store: true,
             },
         ],

@@ -64,7 +64,7 @@ module.exports = {
     vueAddPageProtractorConf,
     languageSnakeCase,
     languageToJavaLanguage,
-    getDefaultLocale,
+    getDefaultLanguage,
 };
 
 /**
@@ -823,7 +823,7 @@ function languageToJavaLanguage(language) {
     return langProp.replace(/_[a-z]+$/g, lang => lang.toUpperCase());
 }
 
-function getDefaultLocale() {
+function getDefaultLanguage() {
     if (process.env.CI === 'true') {
         return 'en';
     }
