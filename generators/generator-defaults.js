@@ -17,6 +17,7 @@
  * limitations under the License.
  */
 const constants = require('./generator-constants');
+const { getDefaultLocale } = require('./utils');
 
 const ANGULAR = constants.SUPPORTED_CLIENT_FRAMEWORKS.ANGULAR;
 
@@ -85,7 +86,9 @@ const clientDefaultConfig = {
 
 const translationDefaultConfig = {
     enableTranslation: true,
-    nativeLanguage: 'en',
+    get nativeLanguage() {
+        return getDefaultLocale();
+    },
     get languages() {
         return [];
     },

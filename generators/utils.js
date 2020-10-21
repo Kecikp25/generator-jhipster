@@ -25,6 +25,7 @@ const _ = require('lodash');
 const fs = require('fs');
 const crypto = require('crypto');
 const os = require('os');
+const osLocale = require('os-locale');
 
 const constants = require('./generator-constants');
 const FileUtils = require('../jdl/utils/file-utils');
@@ -63,6 +64,7 @@ module.exports = {
     vueAddPageProtractorConf,
     languageSnakeCase,
     languageToJavaLanguage,
+    getDefaultLocale,
 };
 
 /**
@@ -819,4 +821,20 @@ function languageToJavaLanguage(language) {
     const langProp = languageSnakeCase(language);
     // Target file : change xx_yyyy_zz to xx_yyyy_ZZ to match java locales
     return langProp.replace(/_[a-z]+$/g, lang => lang.toUpperCase());
+}
+
+function getDefaultLocale() {
+    if (process.env.CI === 'true') {
+        return 'en';
+    }
+    const locale = osLocale.sync();
+    if (locale) {
+        const language =
+            constants.LANGUAGES.find(lang => lang.localeId === locale) ||
+            constants.LANGUAGES.find(lang => lang.value === locale.toLowerCase());
+        if (language) {
+            return language.value;
+        }
+    }
+    return 'en';
 }
