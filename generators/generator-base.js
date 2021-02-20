@@ -128,7 +128,7 @@ module.exports = class JHipsterBaseGenerator extends PrivateBase {
     this.configOptions = this.options.configOptions || {};
 
     /* Force config to use 'generator-jhipster' namespace. */
-    this.config = this._getStorage('generator-jhipster');
+    this._config = this._getStorage('generator-jhipster');
     /* JHipster config using proxy mode used as a plain object instead of using get/set. */
     this.jhipsterConfig = this.config.createProxy();
 
@@ -161,6 +161,7 @@ module.exports = class JHipsterBaseGenerator extends PrivateBase {
     // Load common runtime options.
     this.parseCommonRuntimeOptions();
 
+/*
     if (this.jhipsterConfig.withGeneratedFlag) {
       this.registerGeneratedAnnotationTransform();
     }
@@ -170,13 +171,13 @@ module.exports = class JHipsterBaseGenerator extends PrivateBase {
       this.registerConflicterAttributesTransform();
     }
 
-    this.registerForceEntitiesTransform();
+    this.registerCommitPriorityFilesTask();
+    */
 
     if (!this.options.skipPrettier) {
       this.registerPrettierTransform();
     }
-
-    this.registerCommitPriorityFilesTask();
+    this.registerForceEntitiesTransform();
   }
 
   /**
@@ -2437,8 +2438,8 @@ templates: ${JSON.stringify(existingTemplates, null, 2)}`;
     dest.logo = config.logo;
     config.backendName = config.backendName || 'Java';
     dest.backendName = config.backendName;
-    config.packageJson = config.packageJson || {};
-    dest.packageJson = config.packageJson;
+    config.dependabotPackageJson = config.dependabotPackageJson || {};
+    dest.dependabotPackageJson = config.dependabotPackageJson;
   }
 
   /**

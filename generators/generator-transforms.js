@@ -21,16 +21,16 @@ const through = require('through2');
 const prettier = require('prettier');
 const prettierPluginJava = require('prettier-plugin-java');
 const prettierPluginPackagejson = require('prettier-plugin-packagejson');
+const {pipe, pipeline} = require('pipeline-pipe');
 
 const prettierTransform = function (options, generator, ignoreErrors = false) {
-  return through.obj((file, encoding, callback) => {
+  return pipe(async file => {
     if (file.state === 'deleted') {
-      callback(null, file);
-      return;
+      return file;
     }
     /* resolve from the projects config */
     let fileContent;
-    prettier
+    return prettier
       .resolveConfig(file.relative)
       .then(function (resolvedDestinationFileOptions) {
         const prettierOptions = {
@@ -49,7 +49,7 @@ const prettierTransform = function (options, generator, ignoreErrors = false) {
         fileContent = file.contents.toString('utf8');
         const data = prettier.format(fileContent, prettierOptions);
         file.contents = Buffer.from(data);
-        callback(null, file);
+        return file;
       })
       .catch(error => {
         const errorMessage = `Error parsing file ${file.relative}: ${error}
@@ -57,12 +57,12 @@ const prettierTransform = function (options, generator, ignoreErrors = false) {
 At: ${fileContent}`;
         if (ignoreErrors) {
           generator.warning(errorMessage);
-          callback(null, file);
+          return file;
         } else {
-          callback(new Error(errorMessage));
+          throw new Error(errorMessage);
         }
       });
-  });
+  }, {ordered: true, maxParallel: 4});
 };
 
 const generatedAnnotationTransform = generator => {

@@ -1338,7 +1338,7 @@ module.exports = class JHipsterBasePrivateGenerator extends Generator {
         const filterPatternForPrettier = `{,.,**/,.jhipster/**/}*.{${this.getPrettierExtensions()}}`;
         const prettierFilter = filter(['.yo-rc.json', filterPatternForPrettier], { restore: true });
         // this pipe will pass through (restore) anything that doesn't match typescriptFilter
-        generator.registerTransformStream([
+        generator.queueTransformStream([
           prettierFilter,
           prettierTransform(prettierOptions, this, this.options.ignoreErrors),
           prettierFilter.restore,
@@ -1350,16 +1350,15 @@ module.exports = class JHipsterBasePrivateGenerator extends Generator {
   }
 
   registerGeneratedAnnotationTransform() {
-    this.registerTransformStream(generatedAnnotationTransform(this));
+    this.queueTransformStream(generatedAnnotationTransform(this));
   }
 
   registerForceEntitiesTransform() {
-    this.registerTransformStream(
+    this.queueTransformStream(
       through.obj(function (file, enc, cb) {
         if (path.extname(file.path) === '.json' && path.basename(path.dirname(file.path)) === '.jhipster') {
           file.conflicter = 'force';
         }
-        this.push(file);
         cb();
       })
     );
@@ -1432,7 +1431,6 @@ module.exports = class JHipsterBasePrivateGenerator extends Generator {
   }
 
   registerConflicterAttributesTransform(yoAttributeFileName) {
-    this.registerTransformStream(this.createConflicterAttributesTransform(yoAttributeFileName));
   }
 
   /**
