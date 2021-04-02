@@ -454,7 +454,7 @@ module.exports = class JHipsterServerGenerator extends BaseBlueprintGenerator {
           'java:war:prod': 'npm run java:war -- -Pprod',
           'java:docker:dev': 'npm run java:docker -- -Pdev,webapp',
           'java:docker:prod': 'npm run java:docker -- -Pprod',
-          'ci:backend:test': 'npm run backend:info && npm run backend:doc:test && npm run backend:nohttp:test && npm run backend:unit:test',
+          'ci:backend:test': 'npm run backend:info && npm run backend:unit:test && npm run backend:doc:test && npm run backend:nohttp:test',
           'ci:server:package': 'npm run java:$npm_package_config_packaging:$npm_package_config_default_environment',
           'ci:e2e:package':
             'npm run java:$npm_package_config_packaging:$npm_package_config_default_environment -- -Pe2e -Denforcer.skip=true',

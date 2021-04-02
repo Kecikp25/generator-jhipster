@@ -298,16 +298,16 @@ jobs:
       - name: 'TESTS: Start docker-compose containers for e2e and backend tests'
         if: steps.tests-should-be-skipped.outputs.skip-tests != 'true' && matrix.testcontainers != 1
         run: npm run ci:e2e:prepare
+      - name: 'TESTS: packaging'
+        if: steps.tests-should-be-skipped.outputs.skip-tests != 'true'
+        run: npm run ci:e2e:package
       - name: 'TESTS: backend'
         id: backend
         if: steps.tests-should-be-skipped.outputs.skip-tests != 'true'
         run: npm run ci:backend:test
-      - name: 'TESTS: frontend'
+      - name: 'TESTS: webapp'
         if: steps.tests-should-be-skipped.outputs.skip-tests != 'true'
-        run: npm run ci:frontend:test
-      - name: 'TESTS: packaging'
-        if: steps.tests-should-be-skipped.outputs.skip-tests != 'true'
-        run: npm run ci:e2e:package
+        run: npm run webapp:test
       - name: 'TESTS: Start docker-compose containers for e2e tests'
         if: steps.tests-should-be-skipped.outputs.skip-tests != 'true' && matrix.testcontainers == 1
         run: npm run ci:e2e:prepare
