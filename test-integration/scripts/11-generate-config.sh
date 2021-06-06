@@ -31,7 +31,9 @@ moveEntity() {
 }
 
 prepareFolder() {
-    rm -rf "$JHI_FOLDER_APP"
+    if [[$(pwd) != $JHI_FOLDER_APP]]; then
+        rm -rf "$JHI_FOLDER_APP"
+    fi
 }
 #-------------------------------------------------------------------------------
 # Copy entities json
