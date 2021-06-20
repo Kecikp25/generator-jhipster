@@ -32,7 +32,9 @@ module.exports = {
       tsconfig: './tsconfig.test.json',
       compiler: 'typescript',
       diagnostics: false
-    }
+    },
+    ...require('./webpack/environment'),
+    DEVELOPMENT: false,
   }
 };
 
