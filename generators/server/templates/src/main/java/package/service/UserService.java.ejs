@@ -74,6 +74,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 <%_ if (databaseType === 'sql') { _%>
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.annotation.Propagation;
 <%_ } _%>
 <%_ if (reactive) { _%>
 import reactor.core.publisher.Flux;
@@ -97,6 +98,9 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 <%_ if (!reactive || authenticationType === 'oauth2') { _%>
 import java.util.stream.Collectors;
+<%_ } _%>
+<%_ if (!reactive && databaseType !== 'no') { _%>
+import java.util.concurrent.CompletableFuture;
 <%_ } _%>
 
 /**
@@ -878,6 +882,9 @@ public class UserService {
     <%_ } _%>
     <%_ if (authenticationType === 'oauth2') { _%>
 
+    <%_ if (databaseType === 'sql') { _%>
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    <%_ } _%>
     private <% if (reactive) { %>Mono<<%= asEntity('User') %>><% } else { %><%= asEntity('User') %><% } %> syncUserWithIdP(Map<String, Object> details, <%= asEntity('User') %> user) {
         // save authorities in to sync user roles/groups between IdP and JHipster's local database
         <%_ if (!reactive) { _%>
@@ -999,7 +1006,23 @@ public class UserService {
             })
             <%_ } _%>
             .collect(Collectors.toSet()));
-        return <% if (databaseType !== 'no' && !reactive) { %>new <%= asDto('AdminUser') %>(syncUserWithIdP(attributes, user))<% } else if (!reactive) { %>user<% } %><% if (databaseType === 'no' && reactive) { %>Mono.just(user)<% } else if (reactive) { %>syncUserWithIdP(attributes, user).flatMap(u -> Mono.just(new <%= asDto('AdminUser') %>(u)))<% } %>;
+
+    <%_ if (databaseType === 'no') { _%>
+        return <% if (reactive) { %>Mono.just(user)<% } else { %>user<% } %>;
+    <%_ } else { _%>
+        // Initial synchronization (save) may have a racing condition and can cause a key already exists.
+        // Workaround the error by running async. We don't require it to finish in time.
+        <%_ if (!reactive) { _%>
+        CompletableFuture.runAsync(() -> {
+        	syncUserWithIdP(attributes, user);
+        });
+
+        return new <%= asDto('AdminUser') %>(user);
+        <%_ } else { _%>
+        syncUserWithIdP(attributes, user);
+        return Mono.just(new <%= asDto('AdminUser') %>(user));
+        <%_ } _%>
+    <%_ } _%>
     }
 
     private static <%= databaseType === 'no' ? asDto('AdminUser') : asEntity('User') %> getUser(Map<String, Object> details) {

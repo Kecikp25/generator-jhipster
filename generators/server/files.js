@@ -1114,6 +1114,26 @@ const serverFiles = {
       ],
     },
     {
+      condition: generator => generator.reactive && generator.authenticationType === 'oauth2',
+      path: SERVER_MAIN_SRC_DIR,
+      templates: [
+        {
+          file: 'package/web/filter/OAuth2ReactiveRefreshTokensWebFilter.java',
+          renameTo: generator => `${generator.javaDir}web/filter/OAuth2ReactiveRefreshTokensWebFilter.java`,
+        },
+      ],
+    },
+    {
+      condition: generator => !generator.reactive && generator.authenticationType === 'oauth2',
+      path: SERVER_MAIN_SRC_DIR,
+      templates: [
+        {
+          file: 'package/web/filter/OAuth2RefreshTokensWebFilter.java',
+          renameTo: generator => `${generator.javaDir}web/filter/OAuth2RefreshTokensWebFilter.java`,
+        },
+      ],
+    },
+    {
       condition: generator => generator.messageBroker === 'kafka',
       path: SERVER_MAIN_SRC_DIR,
       templates: [
